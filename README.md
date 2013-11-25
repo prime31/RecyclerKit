@@ -11,7 +11,7 @@ Usage
 - use the following API to manage instances:
 	* TrashMan.spawn replaces your calls to Instantiate
 	* TrashMan.despawn or TrashMan.despawnAfterDelay replaces your calls to Destroy
-
+	* TrashMan.manageRecycleBin creates a new recycle bin at runtime in case you don't want to use the Editor
 
 
 
