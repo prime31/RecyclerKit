@@ -18,6 +18,7 @@ public class DemoUI : MonoBehaviour
 			TrashMan.despawnAfterDelay( newObj, Random.Range( 1f, 2f ) );
 		}
 
+
 		if( GUILayout.Button( "Spawn Sphere" ) )
 		{
 			var newObj = TrashMan.spawn( spherePrefab, Random.onUnitSphere * 3f );
@@ -30,16 +31,25 @@ public class DemoUI : MonoBehaviour
 			}
 		}
 
+
 		if( GUILayout.Button( "Spawn Light from Scene" ) )
 		{
 			var newObj = TrashMan.spawn( "light", Random.onUnitSphere * 10f );
-
+			
 			if( newObj )
 			{
 				newObj.transform.parent = transform;
 				TrashMan.despawnAfterDelay( newObj, Random.Range( 5f, 8f ) );
 			}
 		}
+
+
+		if( GUILayout.Button( "Spawn Particles by GameObject Name" ) )
+		{
+			var newObj = TrashMan.spawn( "Particles", Random.onUnitSphere * 3f );
+			TrashMan.despawnAfterDelay( newObj, Random.Range( 2f, 5f ) );
+		}
+
 
 		if( GUILayout.Button( "Create Recycle Bin at Runtime" ) )
 		{
@@ -49,6 +59,7 @@ public class DemoUI : MonoBehaviour
 			};
 			TrashMan.manageRecycleBin( recycleBin );
 		}
+
 
 		if( GUILayout.Button( "Spawn Capsule" ) )
 		{
