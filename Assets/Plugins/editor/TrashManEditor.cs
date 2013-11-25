@@ -72,8 +72,7 @@ public class TrashManEditor : Editor
 			}
 		}
 
-		var newPrefabPool = new TrashManRecycleBin();
-		newPrefabPool.prefab = go;
+		var newPrefabPool = new TrashManRecycleBin( go.GetComponent<TrashManRecyclableObject>() );
 		
 		_trashManTarget.recycleBinCollection.Add( newPrefabPool );
 		while( _trashManTarget.recycleBinCollection.Count > _prefabFoldouts.Count )
@@ -100,13 +99,15 @@ public class TrashManEditor : Editor
 		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.BeginVertical();
-		
+
+		var originalBackgroundColor = GUI.backgroundColor;
 		for( int n = 0; n < _trashManTarget.recycleBinCollection.Count; n++ )
 		{
 			var prefabPool = _trashManTarget.recycleBinCollection[n];
 
 			// wrapper vertical allows us to style each element
-			EditorGUILayout.BeginVertical( n % 2 == 0 ? "box" : "button" );
+			GUI.backgroundColor = ( n % 2 == 0 ) ? originalBackgroundColor : Color.yellow;
+			EditorGUILayout.BeginVertical( "box" );
 			
 			// PrefabPool DropDown
 			EditorGUILayout.BeginHorizontal();
@@ -201,8 +202,11 @@ public class TrashManEditor : Editor
 	private void dropAreaGUI()
 	{
 		var evt = Event.current;
+		var oldColor = GUI.color;
+		GUI.color = Color.green;
 		var dropArea = GUILayoutUtility.GetRect( 0f, 60f, GUILayout.ExpandWidth( true ) );
-		GUI.Box( dropArea, "Drop a Prefab or GameObject here to create a new can in your TrashMan" );
+		GUI.Box( dropArea, "Drop a Prefab or GameObject here to create a new bin in your TrashMan" );
+		GUI.color = oldColor;
 		
 		switch( evt.type )
 		{
@@ -211,7 +215,7 @@ public class TrashManEditor : Editor
 			{
 				if( !dropArea.Contains( evt.mousePosition ) )
 					break;
-				
+
 				DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
 			
 				if( evt.type == EventType.DragPerform )
@@ -222,7 +226,12 @@ public class TrashManEditor : Editor
 						var go = draggedObject as GameObject;
 						if( !go )
 							continue;
-					
+
+						if( !go.GetComponent<TrashManRecyclableObject>() )
+						{
+							EditorUtility.DisplayDialog( "Trash Man", "Trash Man cannot manage the object '" + go.name + "' since it is missing a TrashManRecyclableObject component.", "OK" );
+							continue;
+						}
 						// TODO: perhaps we should only allow prefabs or perhaps allow GO's in the scene as well?
 						// uncomment to allow only prefabs
 //						if( PrefabUtility.GetPrefabType( go ) == PrefabType.None )

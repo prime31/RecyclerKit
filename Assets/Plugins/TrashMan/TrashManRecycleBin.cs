@@ -7,9 +7,9 @@ using System.Collections.Generic;
 public sealed class TrashManRecycleBin
 {
 	/// <summary>
-	/// The prefab or GameObject in the scene managed by this class.
+	/// The prefab or GameObject in the scene managed by this class. It must have a TrashManRecyclableObject component on it.
 	/// </summary>
-	public GameObject prefab;
+	public TrashManRecyclableObject prefab;
 
 	/// <summary>
 	/// total number of instances to create at start
@@ -63,6 +63,13 @@ public sealed class TrashManRecycleBin
 
 
 	#region Methods
+
+	public TrashManRecycleBin( TrashManRecyclableObject prefab )
+	{
+		this.prefab = prefab;
+		this.prefab.prefabInstanceId = prefab.gameObject.GetInstanceID();
+	}
+
 
 	/// <summary>
 	/// preps the Stack and does preallocation
@@ -155,7 +162,8 @@ public sealed class TrashManRecycleBin
 		if( go != null )
 		{
 			go.SetActive( true );
-			// TODO: associate a method or event with the spawn action
+			var recycleableObject = go.GetComponent<TrashManRecyclableObject>();
+			recycleableObject.onSpawned();
 		}
 		
 		return go;
@@ -168,8 +176,9 @@ public sealed class TrashManRecycleBin
 	/// <param name="go">Go.</param>
 	public void despawn( GameObject go )
 	{
+		var recycleableObject = go.GetComponent<TrashManRecyclableObject>();
+		recycleableObject.onDespawned();
 		go.SetActive( false );
-		// TODO: associate a method or event with the despawn action
 
 		push( go );
 	}

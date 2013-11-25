@@ -14,7 +14,7 @@ public class DemoUI : MonoBehaviour
 	{
 		if( GUILayout.Button( "Spawn Cube" ) )
 		{
-			var newObj = TrashMan.spawn( cubePrefab, Random.onUnitSphere * 5f, Random.rotation );
+			var newObj = TrashMan.spawn( cubePrefab.GetComponent<TrashManRecyclableObject>(), Random.onUnitSphere * 5f, Random.rotation );
 			TrashMan.despawnAfterDelay( newObj, Random.Range( 1f, 2f ) );
 		}
 
@@ -38,6 +38,7 @@ public class DemoUI : MonoBehaviour
 			
 			if( newObj )
 			{
+				newObj.light.color = new Color( Random.Range( 0, 1f ), Random.Range( 0, 1f ), Random.Range( 0, 1f ) );
 				newObj.transform.parent = transform;
 				TrashMan.despawnAfterDelay( newObj, Random.Range( 5f, 8f ) );
 			}
@@ -53,9 +54,9 @@ public class DemoUI : MonoBehaviour
 
 		if( GUILayout.Button( "Create Recycle Bin at Runtime" ) )
 		{
-			var recycleBin = new TrashManRecycleBin()
+			var recycleBin = new TrashManRecycleBin( capsulePrefab.GetComponent<TrashManRecyclableObject>() )
 			{
-				prefab = capsulePrefab
+				instancesToPreallocate = 3
 			};
 			TrashMan.manageRecycleBin( recycleBin );
 		}
