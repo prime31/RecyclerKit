@@ -17,7 +17,7 @@ Usage
 
 License
 -----
-[Attribution-NonCommercial-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode) with [simple explanation](http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US). You are free to use RecyclerKit in any and all games that you make. You cannot sell the RecyclerKit directly or as part of a larger game asset.
+[Attribution-NonCommercial-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode) with [simple explanation](http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US). You are free to use RecyclerKit in any and all games that you make. You cannot sell RecyclerKit directly or as part of a larger game asset.
 
 
 
