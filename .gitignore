@@ -8,5 +8,5 @@
 *.sln
 *.pidb
 Xcode
-GoKitLite.userprefs
-RecyclerKit.userprefs
+*.userprefs
+*.userprefs
