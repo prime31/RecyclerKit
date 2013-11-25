@@ -7,6 +7,7 @@ public class DemoUI : MonoBehaviour
 {
 	public GameObject cubePrefab;
 	public GameObject spherePrefab;
+	public GameObject capsulePrefab;
 
 
 	void OnGUI()
@@ -40,19 +41,19 @@ public class DemoUI : MonoBehaviour
 			}
 		}
 
-		if( GUILayout.Button( "" ) )
+		if( GUILayout.Button( "Create Recycle Bin at Runtime" ) )
 		{
-			
+			var recycleBin = new TrashManRecycleBin()
+			{
+				prefab = capsulePrefab
+			};
+			TrashMan.manageRecycleBin( recycleBin );
 		}
 
-		if( GUILayout.Button( "" ) )
+		if( GUILayout.Button( "Spawn Capsule" ) )
 		{
-			
-		}
-
-		if( GUILayout.Button( "" ) )
-		{
-			
+			var newObj = TrashMan.spawn( capsulePrefab, Random.onUnitSphere * 5f, Random.rotation );
+			TrashMan.despawnAfterDelay( newObj, Random.Range( 1f, 5f ) );
 		}
 	}
 

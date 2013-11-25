@@ -20,11 +20,11 @@ public class TrashManEditor : Editor
 	public void OnEnable()
 	{
 		_trashManTarget = target as TrashMan;
-		_trashManTarget.prefabPoolCollection = (target as TrashMan).prefabPoolCollection;
+		_trashManTarget.recycleBinCollection = (target as TrashMan).recycleBinCollection;
 		
 		_prefabFoldouts = new List<bool>();
-		if( _trashManTarget.prefabPoolCollection != null )
-			for( int n = 0; n < _trashManTarget.prefabPoolCollection.Count; n++ )
+		if( _trashManTarget.recycleBinCollection != null )
+			for( int n = 0; n < _trashManTarget.recycleBinCollection.Count; n++ )
 				_prefabFoldouts.Add( true );
 		
 		clearNullReferences();
@@ -37,14 +37,14 @@ public class TrashManEditor : Editor
 	/// </summary>
 	private void clearNullReferences()
 	{
-		if( _trashManTarget.prefabPoolCollection == null )
+		if( _trashManTarget.recycleBinCollection == null )
 			return;
 		
 		int n = 0;
-		while( n < _trashManTarget.prefabPoolCollection.Count )
+		while( n < _trashManTarget.recycleBinCollection.Count )
 		{
-			if( _trashManTarget.prefabPoolCollection[n].prefab == null )
-				_trashManTarget.prefabPoolCollection.RemoveAt( _trashManTarget.prefabPoolCollection.Count - 1 );
+			if( _trashManTarget.recycleBinCollection[n].prefab == null )
+				_trashManTarget.recycleBinCollection.RemoveAt( _trashManTarget.recycleBinCollection.Count - 1 );
 			else
 				n++;
 		}
@@ -57,12 +57,12 @@ public class TrashManEditor : Editor
 	/// <param name="go">Go.</param>
 	private void addRecycleBin( GameObject go )
 	{
-		if( _trashManTarget.prefabPoolCollection == null )
-			_trashManTarget.prefabPoolCollection = new List<TrashMan.TrashManRecycleBin>();
+		if( _trashManTarget.recycleBinCollection == null )
+			_trashManTarget.recycleBinCollection = new List<TrashManRecycleBin>();
 		
-		if( _trashManTarget.prefabPoolCollection != null )
+		if( _trashManTarget.recycleBinCollection != null )
 		{
-			foreach( var recycleBin in _trashManTarget.prefabPoolCollection )
+			foreach( var recycleBin in _trashManTarget.recycleBinCollection )
 			{
 				if( recycleBin.prefab.gameObject.name == go.name )
 				{
@@ -72,21 +72,27 @@ public class TrashManEditor : Editor
 			}
 		}
 
-		var newPrefabPool = new TrashMan.TrashManRecycleBin();
+		var newPrefabPool = new TrashManRecycleBin();
 		newPrefabPool.prefab = go;
 		
-		_trashManTarget.prefabPoolCollection.Add( newPrefabPool );
-		while( _trashManTarget.prefabPoolCollection.Count > _prefabFoldouts.Count )
+		_trashManTarget.recycleBinCollection.Add( newPrefabPool );
+		while( _trashManTarget.recycleBinCollection.Count > _prefabFoldouts.Count )
 			_prefabFoldouts.Add( false );
 	}
 
 	
 	public override void OnInspectorGUI()
 	{
+		if( Application.isPlaying )
+		{
+			base.OnInspectorGUI();
+			return;
+		}
+
 		GUILayout.Space( 15f );
 		dropAreaGUI();
 		
-		if( _trashManTarget.prefabPoolCollection == null )
+		if( _trashManTarget.recycleBinCollection == null )
 			return;
 		
 		GUILayout.Space( 5f );
@@ -95,9 +101,9 @@ public class TrashManEditor : Editor
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.BeginVertical();
 		
-		for( int n = 0; n < _trashManTarget.prefabPoolCollection.Count; n++ )
+		for( int n = 0; n < _trashManTarget.recycleBinCollection.Count; n++ )
 		{
-			var prefabPool = _trashManTarget.prefabPoolCollection[n];
+			var prefabPool = _trashManTarget.recycleBinCollection[n];
 
 			// wrapper vertical allows us to style each element
 			EditorGUILayout.BeginVertical( n % 2 == 0 ? "box" : "button" );
@@ -106,7 +112,7 @@ public class TrashManEditor : Editor
 			EditorGUILayout.BeginHorizontal();
 			_prefabFoldouts[n] = EditorGUILayout.Foldout( _prefabFoldouts[n], prefabPool.prefab.name, EditorStyles.foldout );
 			if( GUILayout.Button( "-", GUILayout.Width( 20f ) ) && EditorUtility.DisplayDialog( "Remove Recycle Bin", "Are you sure you want to remove this recycle bin?", "Yes", "Cancel" ) )
-				_trashManTarget.prefabPoolCollection.RemoveAt( _trashManTarget.prefabPoolCollection.Count - 1 );
+				_trashManTarget.recycleBinCollection.RemoveAt( _trashManTarget.recycleBinCollection.Count - 1 );
 			EditorGUILayout.EndHorizontal();
 			
 			if( _prefabFoldouts[n] )
