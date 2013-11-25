@@ -14,6 +14,11 @@ Usage
 	* TrashMan.manageRecycleBin creates a new recycle bin at runtime in case you don't want to use the Editor
 
 
+Optional Branch
+----
+
+The ObjectComponent branch has one minor change: any recycleable object must have the TrashManRecycleableObject component on it. This does enable a couple niceties such as spawn/despawn events and no need to access GameObject.name (which allocates a bit of memory)
+
 
 License
 -----
