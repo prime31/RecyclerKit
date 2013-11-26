@@ -115,20 +115,6 @@ public sealed class TrashManRecycleBin
 
 
 	/// <summary>
-	/// pushes the GameObject back onto the stack
-	/// </summary>
-	/// <param name="go">Go.</param>
-	private void push( GameObject go )
-	{
-		if( imposeHardLimit && _gameObjectPool.Count >= hardLimit )
-			return;
-		
-		_spawnedInstanceCount = (int)Mathf.Max( _spawnedInstanceCount - 1, 0 );
-		_gameObjectPool.Push( go );
-	}
-
-
-	/// <summary>
 	/// culls any excess objects if necessary
 	/// </summary>
 	public void cullExcessObjects()
@@ -171,7 +157,8 @@ public sealed class TrashManRecycleBin
 		go.SetActive( false );
 		// TODO: associate a method or event with the despawn action
 
-		push( go );
+		_spawnedInstanceCount--;
+		_gameObjectPool.Push( go );
 	}
 
 	#endregion

@@ -48,12 +48,10 @@ public partial class TrashMan : MonoBehaviour
 		StartCoroutine( cullExcessObjects() );
 	}
 
-	
-	private void OnLevelWasLoaded()
-	{
-		// TODO: perhaps make this configurable per pool then add DontDestroyOnLoad. Currently this does nothing.
-		_instanceIdToRecycleBin.Clear();
-	}
+
+	// TODO: perhaps make this configurable per pool then add DontDestroyOnLoad. Currently this does nothing.
+//	private void OnLevelWasLoaded()
+//	{}
 
 
 	private void OnApplicationQuit()
