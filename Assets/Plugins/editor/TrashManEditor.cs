@@ -85,8 +85,13 @@ public class TrashManEditor : Editor
 	{
 		if( Application.isPlaying )
 		{
-			base.OnInspectorGUI();
-			return;
+			if( _prefabFoldouts.Count < _trashManTarget.recycleBinCollection.Count )
+			{
+				for( var i = 0; i < _trashManTarget.recycleBinCollection.Count - _prefabFoldouts.Count; i++ )
+					_prefabFoldouts.Add( false );
+			}
+			//base.OnInspectorGUI();
+			//return;
 		}
 
 		GUILayout.Space( 15f );

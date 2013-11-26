@@ -26,6 +26,7 @@ public partial class TrashMan : MonoBehaviour
 	/// </summary>
 	private Dictionary<string,int> _poolNameToInstanceId = new Dictionary<string,int>();
 
+	[HideInInspector]
 	public new Transform transform;
 
 
@@ -208,14 +209,15 @@ public partial class TrashMan : MonoBehaviour
 	{	
 		if( go == null )
 			return;
-		
-		if( !instance._poolNameToInstanceId.ContainsKey( go.name ) )
+
+		var goName = go.name;
+		if( !instance._poolNameToInstanceId.ContainsKey( goName ) )
 		{
 			Destroy( go );
 		}
 		else
 		{
-			instance._instanceIdToRecycleBin[instance._poolNameToInstanceId[go.name]].despawn( go );
+			instance._instanceIdToRecycleBin[instance._poolNameToInstanceId[goName]].despawn( go );
 			go.transform.parent = instance.transform;
 		}
 	}
