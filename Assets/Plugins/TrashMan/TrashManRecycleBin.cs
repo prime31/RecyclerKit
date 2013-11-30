@@ -1,11 +1,23 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 [System.Serializable]
 public sealed class TrashManRecycleBin
 {
+	/// <summary>
+	/// Fired when the GameObject that was just spawned
+	/// </summary>
+	public event Action<GameObject> onSpawnedEvent;
+
+	/// <summary>
+	/// Fired when the GameObject that was just despawned
+	/// </summary>
+	public event Action<GameObject> onDespawnedEvent;
+
+
 	/// <summary>
 	/// The prefab or GameObject in the scene managed by this class.
 	/// </summary>
@@ -46,6 +58,7 @@ public sealed class TrashManRecycleBin
 	/// </summary>
 	public float cullInterval = 10f;
 
+
 	/// <summary>
 	/// stores all of our GameObjects
 	/// </summary>
@@ -62,18 +75,7 @@ public sealed class TrashManRecycleBin
 	private int _spawnedInstanceCount = 0;
 
 
-	#region Methods
-
-	/// <summary>
-	/// preps the Stack and does preallocation
-	/// </summary>
-	public void initialize()
-	{
-		//prefab.prefabPoolName = prefab.gameObject.name;
-		_gameObjectPool = new Stack<GameObject>( instancesToPreallocate );
-		allocateGameObjects( instancesToPreallocate );
-	}
-
+	#region Private
 
 	/// <summary>
 	/// allocates
@@ -93,8 +95,8 @@ public sealed class TrashManRecycleBin
 			_gameObjectPool.Push( go );
 		}
 	}
-
-
+	
+	
 	/// <summary>
 	/// pops an object off the stack. Returns null if we hit the hardLimit.
 	/// </summary>
@@ -111,6 +113,21 @@ public sealed class TrashManRecycleBin
 		
 		allocateGameObjects( instancesToAllocateIfEmpty );
 		return pop();
+	}
+
+	#endregion
+
+
+	#region Public
+
+	/// <summary>
+	/// preps the Stack and does preallocation
+	/// </summary>
+	public void initialize()
+	{
+		//prefab.prefabPoolName = prefab.gameObject.name;
+		_gameObjectPool = new Stack<GameObject>( instancesToPreallocate );
+		allocateGameObjects( instancesToPreallocate );
 	}
 
 
@@ -141,7 +158,9 @@ public sealed class TrashManRecycleBin
 		if( go != null )
 		{
 			go.SetActive( true );
-			// TODO: associate a method or event with the spawn action
+
+			if( onSpawnedEvent != null )
+				onSpawnedEvent( go );
 		}
 		
 		return go;
@@ -155,10 +174,12 @@ public sealed class TrashManRecycleBin
 	public void despawn( GameObject go )
 	{
 		go.SetActive( false );
-		// TODO: associate a method or event with the despawn action
 
 		_spawnedInstanceCount--;
 		_gameObjectPool.Push( go );
+
+		if( onDespawnedEvent != null )
+			onDespawnedEvent( go );
 	}
 
 	#endregion

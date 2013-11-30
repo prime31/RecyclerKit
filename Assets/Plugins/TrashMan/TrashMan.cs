@@ -184,16 +184,16 @@ public partial class TrashMan : MonoBehaviour
 	/// <summary>
 	/// pulls an object out of the recycle bin using the bin's name
 	/// </summary>
-	public static GameObject spawn( string recycleBinName, Vector3 position = default( Vector3 ), Quaternion rotation = default( Quaternion ) )
+	public static GameObject spawn( string gameObjectName, Vector3 position = default( Vector3 ), Quaternion rotation = default( Quaternion ) )
 	{
 		int instanceId = -1;
-		if( instance._poolNameToInstanceId.TryGetValue( recycleBinName, out instanceId ) )
+		if( instance._poolNameToInstanceId.TryGetValue( gameObjectName, out instanceId ) )
 		{
 			return spawn( instanceId, position, rotation );
 		}
 		else
 		{
-			Debug.LogError( "attempted to spawn a GameObject from recycle bin (" + recycleBinName + ") but there is no recycle bin setup for it" );
+			Debug.LogError( "attempted to spawn a GameObject from recycle bin (" + gameObjectName + ") but there is no recycle bin setup for it" );
 			return null;
 		}
 	}
@@ -232,6 +232,34 @@ public partial class TrashMan : MonoBehaviour
 		
 		instance.StartCoroutine( instance.internalDespawnAfterDelay( go, delayInSeconds ) );
 	}
+
+
+	/// <summary>
+	/// gets the recycle bin for the given GameObject name. Returns null if none exists.
+	/// </summary>
+	public static TrashManRecycleBin recycleBinForGameObjectName( string gameObjectName )
+	{
+		if( instance._poolNameToInstanceId.ContainsKey( gameObjectName ) )
+		{
+			var instanceId = instance._poolNameToInstanceId[gameObjectName];
+			return instance._instanceIdToRecycleBin[instanceId];
+		}
+		return null;
+	}
+
+
+	/// <summary>
+	/// gets the recycle bin for the given GameObject. Returns null if none exists.
+	/// </summary>
+	/// <returns>The bin for game object.</returns>
+	/// <param name="go">Go.</param>
+	public static TrashManRecycleBin recycleBinForGameObject( GameObject go )
+	{
+		if( instance._instanceIdToRecycleBin.ContainsKey( go.GetInstanceID() ) )
+			return instance._instanceIdToRecycleBin[go.GetInstanceID()];
+		return null;
+	}
+
 
 	#endregion
 

@@ -179,7 +179,7 @@ public class TrashManEditor : Editor
 					EditorGUILayout.EndHorizontal();
 					EditorGUILayout.BeginHorizontal();
 					GUILayout.Space( 20f );
-					GUILayout.Label( new GUIContent( "Cull Delay", "Duration in seconds between cull checks" ), EditorStyles.label, GUILayout.Width( 100f ) );
+					GUILayout.Label( new GUIContent( "Cull Delay", "Duration in seconds between cull checks. Note that the master cull check only occurs every 5 seconds" ), EditorStyles.label, GUILayout.Width( 100f ) );
 					prefabPool.cullInterval = EditorGUILayout.FloatField( prefabPool.cullInterval );
 					if( prefabPool.cullInterval < 0 )
 						prefabPool.cullInterval = 0;

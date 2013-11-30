@@ -5,9 +5,18 @@ using System.Collections;
 
 public class DemoUI : MonoBehaviour
 {
+	// instance variables with links to the prefabs that we will be spawning
 	public GameObject cubePrefab;
 	public GameObject spherePrefab;
 	public GameObject capsulePrefab;
+
+
+	void Start()
+	{
+		// if you plan on listening to the spawn/despawn events, Start is a good time to add your listeners.
+		TrashMan.recycleBinForGameObject( cubePrefab ).onSpawnedEvent += go => Debug.Log( "spawned object: " + go );
+		TrashMan.recycleBinForGameObject( cubePrefab ).onDespawnedEvent += go => Debug.Log( "DEspawned object: " + go );
+	}
 
 
 	void OnGUI()
