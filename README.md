@@ -1,7 +1,7 @@
 RecyclerKit
 ===========
 
-RecyclerKit is an object pooling system that is super easy to use. Stick a TrashMan compoenent on any GameObject in your scene and drag any prefabs you want pooled into it's inspector. You can configure the total objects to preallocate and a couple other things there. Everything has tooltips so just hover your mouse over them to see what they do. You then use the spawn method where you would normally call Instantiate and the despawn method where you would normally call Destroy.
+RecyclerKit is an object pooling system that is super easy to use. Stick a TrashMan component on any GameObject in your scene and drag any prefabs you want pooled into it's inspector. You can configure the total objects to preallocate and a couple other things there. Everything has tooltips so just hover your mouse over them to see what they do. You then use the spawn method where you would normally call Instantiate and the despawn method where you would normally call Destroy.
 
 
 Usage
