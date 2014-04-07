@@ -58,7 +58,7 @@ public partial class TrashMan : MonoBehaviour
 	{
 		instance = null;
 	}
-	
+
 	#endregion
 
 
@@ -118,6 +118,8 @@ public partial class TrashMan : MonoBehaviour
 				newTransform.parent = null;
 				newTransform.position = position;
 				newTransform.rotation = rotation;
+
+				newGo.SetActive( true );
 			}
 
 			return newGo;
@@ -175,12 +177,12 @@ public partial class TrashMan : MonoBehaviour
 			Debug.LogError( "attempted to spawn go (" + go.name + ") but there is no recycle bin setup for it. Falling back to Instantiate" );
 			var newGo = GameObject.Instantiate( go, position, rotation ) as GameObject;
 			newGo.transform.parent = null;
-			
+
 			return newGo;
 		}
 	}
 
-	
+
 	/// <summary>
 	/// pulls an object out of the recycle bin using the bin's name
 	/// </summary>
@@ -197,14 +199,14 @@ public partial class TrashMan : MonoBehaviour
 			return null;
 		}
 	}
-	
-	
+
+
 	/// <summary>
 	/// sticks the GameObject back into it's recycle bin. If the GameObject has no bin it is destroyed.
 	/// </summary>
 	/// <param name="go">Go.</param>
 	public static void despawn( GameObject go )
-	{	
+	{
 		if( go == null )
 			return;
 
@@ -219,17 +221,17 @@ public partial class TrashMan : MonoBehaviour
 			go.transform.parent = instance.transform;
 		}
 	}
-	
-	
+
+
 	/// <summary>
 	/// sticks the GameObject back into it's recycle bin after a delay. If the GameObject has no bin it is destroyed.
 	/// </summary>
 	/// <param name="go">Go.</param>
 	public static void despawnAfterDelay( GameObject go, float delayInSeconds )
-	{	
+	{
 		if( go == null )
 			return;
-		
+
 		instance.StartCoroutine( instance.internalDespawnAfterDelay( go, delayInSeconds ) );
 	}
 

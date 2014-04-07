@@ -85,7 +85,7 @@ public sealed class TrashManRecycleBin
 	{
 		if( imposeHardLimit && _gameObjectPool.Count + count > hardLimit )
 			count = hardLimit - _gameObjectPool.Count;
-		
+
 		for( int n = 0; n < count; n++ )
 		{
 			GameObject go = GameObject.Instantiate( prefab.gameObject ) as GameObject;
@@ -95,8 +95,8 @@ public sealed class TrashManRecycleBin
 			_gameObjectPool.Push( go );
 		}
 	}
-	
-	
+
+
 	/// <summary>
 	/// pops an object off the stack. Returns null if we hit the hardLimit.
 	/// </summary>
@@ -104,13 +104,13 @@ public sealed class TrashManRecycleBin
 	{
 		if( imposeHardLimit && _spawnedInstanceCount >= hardLimit )
 			return null;
-		
+
 		if( _gameObjectPool.Count > 0 )
 		{
 			_spawnedInstanceCount++;
 			return _gameObjectPool.Pop();
 		}
-		
+
 		allocateGameObjects( instancesToAllocateIfEmpty );
 		return pop();
 	}
@@ -138,7 +138,7 @@ public sealed class TrashManRecycleBin
 	{
 		if( !cullExcessPrefabs || _gameObjectPool.Count <= instancesToMaintainInPool )
 			return;
-		
+
 		if( Time.time > _timeOfLastCull + cullInterval )
 		{
 			_timeOfLastCull = Time.time;
@@ -154,15 +154,13 @@ public sealed class TrashManRecycleBin
 	public GameObject spawn()
 	{
 		var go = pop();
-		
+
 		if( go != null )
 		{
-			go.SetActive( true );
-
 			if( onSpawnedEvent != null )
 				onSpawnedEvent( go );
 		}
-		
+
 		return go;
 	}
 
