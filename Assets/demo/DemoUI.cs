@@ -10,6 +10,8 @@ public class DemoUI : MonoBehaviour
 	public GameObject spherePrefab;
 	public GameObject capsulePrefab;
 
+	private bool _didCreateCapsuleRecycleBin;
+
 
 	void Start()
 	{
@@ -44,7 +46,7 @@ public class DemoUI : MonoBehaviour
 		if( GUILayout.Button( "Spawn Light from Scene" ) )
 		{
 			var newObj = TrashMan.spawn( "light", Random.onUnitSphere * 10f );
-			
+
 			if( newObj )
 			{
 				newObj.transform.parent = transform;
@@ -55,13 +57,13 @@ public class DemoUI : MonoBehaviour
 
 		if( GUILayout.Button( "Spawn Particles by GameObject Name" ) )
 		{
-			var newObj = TrashMan.spawn( "Particles", Random.onUnitSphere * 3f );
-			TrashMan.despawnAfterDelay( newObj, Random.Range( 2f, 5f ) );
+			TrashMan.spawn( "Particles", Random.onUnitSphere * 3f );
 		}
 
 
 		if( GUILayout.Button( "Create Recycle Bin at Runtime" ) )
 		{
+			_didCreateCapsuleRecycleBin = true;
 			var recycleBin = new TrashManRecycleBin()
 			{
 				prefab = capsulePrefab
@@ -70,7 +72,7 @@ public class DemoUI : MonoBehaviour
 		}
 
 
-		if( GUILayout.Button( "Spawn Capsule" ) )
+		if( _didCreateCapsuleRecycleBin && GUILayout.Button( "Spawn Capsule" ) )
 		{
 			var newObj = TrashMan.spawn( capsulePrefab, Random.onUnitSphere * 5f, Random.rotation );
 			TrashMan.despawnAfterDelay( newObj, Random.Range( 1f, 5f ) );

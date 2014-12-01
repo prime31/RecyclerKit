@@ -8,12 +8,12 @@ using System;
 public sealed class TrashManRecycleBin
 {
 	/// <summary>
-	/// Fired when the GameObject that was just spawned
+	/// Fired when the GameObject was just spawned
 	/// </summary>
 	public event Action<GameObject> onSpawnedEvent;
 
 	/// <summary>
-	/// Fired when the GameObject that was just despawned
+	/// Fired when the GameObject was just despawned
 	/// </summary>
 	public event Action<GameObject> onDespawnedEvent;
 
@@ -57,6 +57,11 @@ public sealed class TrashManRecycleBin
 	/// how often in seconds should culling occur
 	/// </summary>
 	public float cullInterval = 10f;
+
+	/// <summary>
+	/// if true, the GameObject must contain a ParticleSystem! It will be automatically despawned after system.duration.
+	/// </summary>
+	public bool automaticallyRecycleParticleSystems = false;
 
 
 	/// <summary>
@@ -159,6 +164,21 @@ public sealed class TrashManRecycleBin
 		{
 			if( onSpawnedEvent != null )
 				onSpawnedEvent( go );
+
+			if( automaticallyRecycleParticleSystems )
+			{
+				var system = go.GetComponent<ParticleSystem>();
+				if( system )
+				{
+					// we add the startLifetime to the system's duration to avoid it getting recycled while emitting.
+					// note that curves can extend the startLifetime so this isn't perfect
+					TrashMan.despawnAfterDelay( go, system.duration + system.startLifetime );
+				}
+				else
+				{
+					Debug.LogError( "automaticallyRecycleParticleSystems is true but there is no ParticleSystem on this GameObject!" );
+				}
+			}
 		}
 
 		return go;
