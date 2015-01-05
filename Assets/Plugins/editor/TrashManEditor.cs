@@ -27,12 +27,111 @@ public class TrashManEditor : Editor
 				tex.Apply();
 
 				_boxStyle.normal.background = tex;
+
+				tex = new Texture2D( 1, 1 );
+				tex.hideFlags = HideFlags.HideAndDontSave;
+				tex.SetPixel( 0, 0, Color.green );
+				tex.Apply();
+
+				_boxStyle.hover.background = tex;
+
+				var p = _boxStyle.padding;
+				p.left = p.right = 20;
+				p.top = 6;
+				_boxStyle.padding = p;
+
+				_boxStyle.fontSize = 19;
 			}
 
 			return _boxStyle;
 		}
 	}
 
+
+	private GUIStyle _binStyleEven;
+	private GUIStyle binStyleEven
+	{
+		get
+		{
+			if( _binStyleEven == null )
+			{
+				_binStyleEven = new GUIStyle( GUI.skin.box );
+
+				var tex = new Texture2D( 1, 1 );
+				tex.hideFlags = HideFlags.HideAndDontSave;
+				tex.SetPixel( 0, 0, new Color( 1f, 1f, 1f, 0.2f ) );
+				tex.Apply();
+
+				_binStyleEven.normal.background = tex;
+				var p = _binStyleEven.padding;
+				p.left = 14;
+				_binStyleEven.padding = p;
+			}
+
+			return _binStyleEven;
+		}
+	}
+
+
+	private GUIStyle _binStyleOdd;
+	private GUIStyle binStyleOdd
+	{
+		get
+		{
+			if( _binStyleOdd == null )
+			{
+				_binStyleOdd = new GUIStyle( GUI.skin.box );
+
+				var tex = new Texture2D( 1, 1 );
+				tex.hideFlags = HideFlags.HideAndDontSave;
+				tex.SetPixel( 0, 0, new Color( 1f, 1f, 1f, 0.1f ) );
+				tex.Apply();
+
+				_binStyleOdd.normal.background = tex;
+				var p = _binStyleEven.padding;
+				p.left = 14;
+				_binStyleOdd.padding = p;
+			}
+
+			return _binStyleOdd;
+		}
+	}
+
+
+	private GUIStyle _buttonStyle;
+	private GUIStyle buttonStyle
+	{
+		get
+		{
+			if( _buttonStyle == null )
+			{
+				_buttonStyle = new GUIStyle( GUI.skin.button );
+
+				var normalTex = new Texture2D( 1, 1 );
+				normalTex.hideFlags = HideFlags.HideAndDontSave;
+				normalTex.SetPixel( 0, 0, new Color( 1f, 1f, 1f, 0.8f ) );
+				normalTex.Apply();
+
+				var activeTex = new Texture2D( 1, 1 );
+				activeTex.hideFlags = HideFlags.HideAndDontSave;
+				activeTex.SetPixel( 0, 0, Color.yellow );
+				activeTex.Apply();
+
+				var hoverTex = new Texture2D( 1, 1 );
+				hoverTex.hideFlags = HideFlags.HideAndDontSave;
+				hoverTex.SetPixel( 0, 0, Color.red );
+				hoverTex.Apply();
+
+				_buttonStyle.normal.background = normalTex;
+				_buttonStyle.hover.background = hoverTex;
+				_buttonStyle.active.background = activeTex;
+
+				_buttonStyle.normal.textColor = Color.black;
+			}
+
+			return _buttonStyle;
+		}
+	}
 
 
 	#region Methods
@@ -53,8 +152,29 @@ public class TrashManEditor : Editor
 
 	void OnDisable()
 	{
-		DestroyImmediate( _boxStyle.normal.background );
+		if( _boxStyle != null )
+		{
+			DestroyImmediate( _boxStyle.normal.background );
+			DestroyImmediate( _boxStyle.hover.background );
+		}
+
+		if( _binStyleEven != null )
+			DestroyImmediate( _binStyleEven.normal.background );
+
+		if( _binStyleOdd != null )
+			DestroyImmediate( _binStyleOdd.normal.background );
+
+		if( _buttonStyle != null )
+		{
+			DestroyImmediate( _buttonStyle.normal.background );
+			DestroyImmediate( _buttonStyle.hover.background );
+			DestroyImmediate( _buttonStyle.active.background );
+		}
+
 		_boxStyle = null;
+		_binStyleEven = null;
+		_binStyleOdd = null;
+		_buttonStyle = null;
 	}
 
 
@@ -138,12 +258,12 @@ public class TrashManEditor : Editor
 			var prefabPool = _trashManTarget.recycleBinCollection[n];
 
 			// wrapper vertical allows us to style each element
-			EditorGUILayout.BeginVertical( n % 2 == 0 ? "box" : "button" );
+			EditorGUILayout.BeginVertical( n % 2 == 0 ? binStyleEven : binStyleOdd );
 
 			// PrefabPool DropDown
 			EditorGUILayout.BeginHorizontal();
 			_prefabFoldouts[n] = EditorGUILayout.Foldout( _prefabFoldouts[n], prefabPool.prefab.name, EditorStyles.foldout );
-			if( GUILayout.Button( "-", GUILayout.Width( 20f ) ) && EditorUtility.DisplayDialog( "Remove Recycle Bin", "Are you sure you want to remove this recycle bin?", "Yes", "Cancel" ) )
+			if( GUILayout.Button( "-", buttonStyle, GUILayout.Width( 20f ) ) && EditorUtility.DisplayDialog( "Remove Recycle Bin", "Are you sure you want to remove this recycle bin?", "Yes", "Cancel" ) )
 				_trashManTarget.recycleBinCollection.RemoveAt( _trashManTarget.recycleBinCollection.Count - 1 );
 			EditorGUILayout.EndHorizontal();
 
