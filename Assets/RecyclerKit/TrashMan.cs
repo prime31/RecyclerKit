@@ -17,6 +17,13 @@ public partial class TrashMan : MonoBehaviour
 	public List<TrashManRecycleBin> recycleBinCollection;
 
 	/// <summary>
+	/// this is how often in seconds TrashMan should cull excess objects. Setting this to 0 or a negative number will
+	/// fully turn off automatic culling. You can then use the TrashManRecycleBin.cullExcessObjects method manually if
+	/// you would still like to do any culling.
+	/// </summary>
+	public float cullExcessObjectsInterval = 10f;
+
+	/// <summary>
 	/// uses the GameObject instanceId as its key for fast look-ups
 	/// </summary>
 	private Dictionary<int,TrashManRecycleBin> _instanceIdToRecycleBin = new Dictionary<int,TrashManRecycleBin>();
@@ -70,7 +77,7 @@ public partial class TrashMan : MonoBehaviour
 	/// <returns>The excess objects.</returns>
 	private IEnumerator cullExcessObjects()
 	{
-		var waiter = new WaitForSeconds( 5f );
+		var waiter = new WaitForSeconds( cullExcessObjectsInterval );
 
 		while( true )
 		{
