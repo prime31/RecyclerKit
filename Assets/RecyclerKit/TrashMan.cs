@@ -202,7 +202,7 @@ public partial class TrashMan : MonoBehaviour
 
 
 	/// <summary>
-	/// sticks the GameObject back into it's recycle bin. If the GameObject has no bin it is destroyed.
+	/// sticks the GameObject back into its recycle bin. If the GameObject has no bin it is destroyed.
 	/// </summary>
 	/// <param name="go">Go.</param>
 	public static void despawn( GameObject go )
