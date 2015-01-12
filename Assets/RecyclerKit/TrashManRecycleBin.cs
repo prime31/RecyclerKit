@@ -63,6 +63,11 @@ public sealed class TrashManRecycleBin
 	/// </summary>
 	public bool automaticallyRecycleParticleSystems = false;
 
+	/// <summary>
+	/// if true and TrashMan.persistBetweenScenes is true this recycle bin will not be purged when a new level loads
+	/// </summary>
+	public bool persistBetweenScenes = false;
+
 
 	/// <summary>
 	/// stores all of our GameObjects
@@ -198,6 +203,21 @@ public sealed class TrashManRecycleBin
 
 		if( onDespawnedEvent != null )
 			onDespawnedEvent( go );
+	}
+
+
+	/// <summary>
+	/// clears out the bin optionally calling Destroy on all objects in it. note than any spawned objects are not touched by this operation!
+	/// </summary>
+	public void clearBin( bool shouldDestroyAllManagedObjects )
+	{
+		while( _gameObjectPool.Peek() != null )
+		{
+			var go = _gameObjectPool.Pop();
+
+			if( shouldDestroyAllManagedObjects )
+				GameObject.Destroy( go );
+		}
 	}
 
 	#endregion

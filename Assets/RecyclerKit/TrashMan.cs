@@ -12,8 +12,9 @@ public partial class TrashMan : MonoBehaviour
 	public static TrashMan instance;
 
 	/// <summary>
-	/// stores the recycle bins and is used to populate the Dictionaries at startup
+	/// stores the recycle bins and is used to populate the lookup Dictionaries at startup
 	/// </summary>
+	[HideInInspector]
 	public List<TrashManRecycleBin> recycleBinCollection;
 
 	/// <summary>
@@ -22,6 +23,11 @@ public partial class TrashMan : MonoBehaviour
 	/// you would still like to do any culling.
 	/// </summary>
 	public float cullExcessObjectsInterval = 10f;
+
+	/// <summary>
+	/// if true, DontDestroyOnLoad will be called on the TrashMan
+	/// </summary>
+	public bool persistBetweenScenes = false;
 
 	/// <summary>
 	/// uses the GameObject instanceId as its key for fast look-ups
@@ -50,15 +56,25 @@ public partial class TrashMan : MonoBehaviour
 			transform = gameObject.transform;
 			instance = this;
 			initializePrefabPools();
+
+			if( persistBetweenScenes )
+				DontDestroyOnLoad( gameObject );
 		}
 
-		StartCoroutine( cullExcessObjects() );
+		// only cull if we have an interval greater than 0
+		if( cullExcessObjectsInterval > 0 )
+			StartCoroutine( cullExcessObjects() );
 	}
 
 
-	// TODO: perhaps make this configurable per pool then add DontDestroyOnLoad. Currently this does nothing.
-//	private void OnLevelWasLoaded()
-//	{}
+	private void OnLevelWasLoaded()
+	{
+		for( var i = recycleBinCollection.Count - 1; i >= 0; i-- )
+		{
+			if( !recycleBinCollection[i].persistBetweenScenes )
+				removeRecycleBin( recycleBinCollection[i] );
+		}
+	}
 
 
 	private void OnApplicationQuit()
@@ -153,6 +169,10 @@ public partial class TrashMan : MonoBehaviour
 
 	#region Public
 
+	/// <summary>
+	/// tells TrashMan to start managing the recycle bin at runtime
+	/// </summary>
+	/// <param name="recycleBin">Recycle bin.</param>
 	public static void manageRecycleBin( TrashManRecycleBin recycleBin )
 	{
 		// make sure we can safely add the bin!
@@ -166,6 +186,26 @@ public partial class TrashMan : MonoBehaviour
 		recycleBin.initialize();
 		instance._instanceIdToRecycleBin.Add( recycleBin.prefab.GetInstanceID(), recycleBin );
 		instance._poolNameToInstanceId.Add( recycleBin.prefab.name, recycleBin.prefab.GetInstanceID() );
+	}
+
+
+	/// <summary>
+	/// stops managing the recycle bin optionally destroying all managed objects
+	/// </summary>
+	/// <param name="recycleBin">Recycle bin.</param>
+	/// <param name="shouldDestroyAllManagedObjects">If set to <c>true</c> should destroy all managed objects.</param>
+	public static void removeRecycleBin( TrashManRecycleBin recycleBin, bool shouldDestroyAllManagedObjects = true )
+	{
+		var recycleBinName = recycleBin.prefab.name;
+
+		// make sure we are managing the bin first
+		if( instance._poolNameToInstanceId.ContainsKey( recycleBinName ) )
+		{
+			instance._poolNameToInstanceId.Remove( recycleBinName );
+			instance._instanceIdToRecycleBin.Remove( recycleBin.prefab.GetInstanceID() );
+			instance.recycleBinCollection.Remove( recycleBin );
+			recycleBin.clearBin( shouldDestroyAllManagedObjects );
+		}
 	}
 
 

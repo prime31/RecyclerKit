@@ -241,6 +241,8 @@ public class TrashManEditor : Editor
 			//return;
 		}
 
+		base.OnInspectorGUI();
+
 		GUILayout.Space( 15f );
 		dropAreaGUI();
 
@@ -342,6 +344,14 @@ public class TrashManEditor : Editor
 					prefabPool.cullInterval = EditorGUILayout.FloatField( prefabPool.cullInterval );
 					if( prefabPool.cullInterval < 0 )
 						prefabPool.cullInterval = 0;
+					EditorGUILayout.EndHorizontal();
+				}
+
+				if( _trashManTarget.persistBetweenScenes )
+				{
+					EditorGUILayout.BeginHorizontal();
+					GUILayout.Label( new GUIContent( "Persist Between Scenes", "If true this recycle bin will not be purged when a new level loads" ), EditorStyles.label, GUILayout.Width( 115f ) );
+					prefabPool.persistBetweenScenes = EditorGUILayout.Toggle( prefabPool.persistBetweenScenes );
 					EditorGUILayout.EndHorizontal();
 				}
 
