@@ -211,7 +211,7 @@ public sealed class TrashManRecycleBin
 	/// </summary>
 	public void clearBin( bool shouldDestroyAllManagedObjects )
 	{
-		while( _gameObjectPool.Peek() != null )
+		while( _gameObjectPool.Count > 0 )
 		{
 			var go = _gameObjectPool.Pop();
 
