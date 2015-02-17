@@ -266,7 +266,7 @@ public class TrashManEditor : Editor
 			EditorGUILayout.BeginHorizontal();
 			_prefabFoldouts[n] = EditorGUILayout.Foldout( _prefabFoldouts[n], prefabPool.prefab.name, EditorStyles.foldout );
 			if( GUILayout.Button( "-", buttonStyle, GUILayout.Width( 20f ) ) && EditorUtility.DisplayDialog( "Remove Recycle Bin", "Are you sure you want to remove this recycle bin?", "Yes", "Cancel" ) )
-				_trashManTarget.recycleBinCollection.RemoveAt( _trashManTarget.recycleBinCollection.Count - 1 );
+				_trashManTarget.recycleBinCollection.RemoveAt( n );
 			EditorGUILayout.EndHorizontal();
 
 			if( _prefabFoldouts[n] )
