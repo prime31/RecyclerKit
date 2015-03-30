@@ -138,7 +138,14 @@ public partial class TrashMan : MonoBehaviour
 			if( newGo != null )
 			{
 				var newTransform = newGo.transform;
-				newTransform.parent = null;
+
+#if UNITY_4_6 || UNITY_5_0
+                if (newTransform as RectTransform)
+                    newTransform.SetParent(null, true);
+                else
+#endif
+				    newTransform.parent = null;
+
 				newTransform.position = position;
 				newTransform.rotation = rotation;
 
@@ -221,9 +228,15 @@ public partial class TrashMan : MonoBehaviour
 		}
 		else
 		{
-			Debug.LogError( "attempted to spawn go (" + go.name + ") but there is no recycle bin setup for it. Falling back to Instantiate" );
+			Debug.LogWarning( "attempted to spawn go (" + go.name + ") but there is no recycle bin setup for it. Falling back to Instantiate" );
 			var newGo = GameObject.Instantiate( go, position, rotation ) as GameObject;
-			newGo.transform.parent = null;
+
+#if UNITY_4_6 || UNITY_5_0
+            if (newGo.transform as RectTransform != null)
+                newGo.transform.SetParent(null, true);
+            else
+#endif
+			    newGo.transform.parent = null;
 
 			return newGo;
 		}
@@ -265,7 +278,13 @@ public partial class TrashMan : MonoBehaviour
 		else
 		{
 			instance._instanceIdToRecycleBin[instance._poolNameToInstanceId[goName]].despawn( go );
-			go.transform.parent = instance.transform;
+
+#if UNITY_4_6 || UNITY_5_0
+            if (go.transform as RectTransform != null)
+                go.transform.SetParent(instance.transform, true);
+            else
+#endif
+                go.transform.parent = instance.transform;
 		}
 	}
 

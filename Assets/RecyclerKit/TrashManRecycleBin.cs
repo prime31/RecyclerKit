@@ -100,7 +100,11 @@ public sealed class TrashManRecycleBin
 		{
 			GameObject go = GameObject.Instantiate( prefab.gameObject ) as GameObject;
 			go.name = prefab.name;
-			go.transform.parent = TrashMan.instance.transform;
+            if(go.transform as RectTransform)
+            {
+            }
+            else
+			    go.transform.parent = TrashMan.instance.transform;
 			go.SetActive( false );
 			_gameObjectPool.Push( go );
 		}
