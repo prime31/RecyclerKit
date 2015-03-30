@@ -102,6 +102,7 @@ public sealed class TrashManRecycleBin
 			go.name = prefab.name;
             if(go.transform as RectTransform)
             {
+                go.transform.SetParent(TrashMan.instance.transform, false);
             }
             else
 			    go.transform.parent = TrashMan.instance.transform;
