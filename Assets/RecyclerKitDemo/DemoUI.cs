@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+#if UNITY_4_6 || UNITY_5_0
+using UnityEngine.UI;
+#endif
 
 
 public class DemoUI : MonoBehaviour
@@ -11,7 +13,11 @@ public class DemoUI : MonoBehaviour
 	public GameObject capsulePrefab;
 
 	private bool _didCreateCapsuleRecycleBin;
-
+#if UNITY_4_6 || UNITY_5_0
+	private bool _didCreateUiStuff;
+	GameObject canvasRoot;
+	GameObject uiPrefab;
+#endif
 
 	void Start()
 	{
@@ -60,7 +66,17 @@ public class DemoUI : MonoBehaviour
 			TrashMan.spawn( "Particles", Random.onUnitSphere * 3f );
 		}
 
-
+#if UNITY_4_6 || UNITY_5_0
+		if( GUILayout.Button( "Spawn UI element" ) )
+		{
+			CreateCanvas();
+			var go = TrashMan.spawn( uiPrefab, Vector2.zero );
+			go.transform.SetParent(canvasRoot.transform, true);
+			var rt = go.transform as RectTransform;
+			rt.anchoredPosition = new Vector2(Random.Range (-380,380), Random.Range (-280,280));
+			TrashMan.despawnAfterDelay( go, Random.Range( 1f, 5f ) );
+		}
+#endif
 		if( GUILayout.Button( "Create Recycle Bin at Runtime" ) )
 		{
 			_didCreateCapsuleRecycleBin = true;
@@ -79,4 +95,38 @@ public class DemoUI : MonoBehaviour
 		}
 	}
 
+#if UNITY_4_6 || UNITY_5_0
+	void CreateCanvas()
+	{
+		if(!_didCreateUiStuff)
+		{
+			_didCreateUiStuff = true;
+			//Create the UI canvas game object
+			canvasRoot = new GameObject("Canvas");
+			var canvas = canvasRoot.AddComponent<Canvas>();
+			canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+			var cs = canvasRoot.AddComponent<CanvasScaler>();
+			cs.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+			cs.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+			cs.referenceResolution = new Vector2(800,600);
+
+			//create our ui prefab
+			uiPrefab = new GameObject("UItxt");
+			uiPrefab.transform.position = new Vector3(1000,10000);
+			var txt = uiPrefab.AddComponent<Text>();
+			txt.font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+			txt.text = "Some text";
+			txt.horizontalOverflow = HorizontalWrapMode.Overflow;
+			txt.color = Color.white;
+			txt.resizeTextForBestFit = true;
+
+			//Make a recycle bin for it
+			var recycleBin = new TrashManRecycleBin()
+			{
+				prefab = uiPrefab
+			};
+			TrashMan.manageRecycleBin( recycleBin );
+		}
+	}
+#endif
 }
