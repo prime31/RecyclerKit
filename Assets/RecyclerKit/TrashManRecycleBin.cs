@@ -107,6 +107,7 @@ public sealed class TrashManRecycleBin
                 go.transform.SetParent(TrashMan.instance.transform, false);
             }
             else
+#endif
 			    go.transform.parent = TrashMan.instance.transform;
 			go.SetActive( false );
 			_gameObjectPool.Push( go );
