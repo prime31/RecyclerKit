@@ -40,7 +40,7 @@ public class TrashManEditor : Editor
 				p.top = 6;
 				_boxStyle.padding = p;
 
-				_boxStyle.fontSize = 19;
+				_boxStyle.fontSize = 15;
 			}
 
 			return _boxStyle;
@@ -265,9 +265,11 @@ public class TrashManEditor : Editor
 			// PrefabPool DropDown
 			EditorGUILayout.BeginHorizontal();
 			_prefabFoldouts[n] = EditorGUILayout.Foldout( _prefabFoldouts[n], prefabPool.prefab.name, EditorStyles.foldout );
-			if( GUILayout.Button( "-", buttonStyle, GUILayout.Width( 20f ) ) && EditorUtility.DisplayDialog( "Remove Recycle Bin", "Are you sure you want to remove this recycle bin?", "Yes", "Cancel" ) )
+			if( GUILayout.Button( "X", buttonStyle, GUILayout.Width( 20f ), GUILayout.Height( 15f ) ) && EditorUtility.DisplayDialog( "Remove Recycle Bin", "Are you sure you want to remove this recycle bin?", "Yes", "Cancel" ) )
 				_trashManTarget.recycleBinCollection.RemoveAt( n );
 			EditorGUILayout.EndHorizontal();
+
+			GUILayout.Space( 2 );
 
 			if( _prefabFoldouts[n] )
 			{
