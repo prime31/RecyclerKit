@@ -141,7 +141,7 @@ public partial class TrashMan : MonoBehaviour
 
 #if UNITY_4_6 || UNITY_5_0
                 if (newTransform as RectTransform)
-                    newTransform.SetParent(null, true);
+                    newTransform.SetParent(null, false);
                 else
 #endif
 				    newTransform.parent = null;
@@ -233,7 +233,7 @@ public partial class TrashMan : MonoBehaviour
 
 #if UNITY_4_6 || UNITY_5_0
             if (newGo.transform as RectTransform != null)
-                newGo.transform.SetParent(null, true);
+                newGo.transform.SetParent(null, false);
             else
 #endif
 			    newGo.transform.parent = null;
@@ -281,7 +281,7 @@ public partial class TrashMan : MonoBehaviour
 
 #if UNITY_4_6 || UNITY_5_0
             if (go.transform as RectTransform != null)
-                go.transform.SetParent(instance.transform, true);
+                go.transform.SetParent(instance.transform, false);
             else
 #endif
                 go.transform.parent = instance.transform;
