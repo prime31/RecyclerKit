@@ -72,17 +72,17 @@ public sealed class TrashManRecycleBin
 	/// <summary>
 	/// stores all of our GameObjects
 	/// </summary>
-	private Stack<GameObject> _gameObjectPool;
+	Stack<GameObject> _gameObjectPool;
 
 	/// <summary>
 	/// last time culling happened
 	/// </summary>
-	private float _timeOfLastCull = float.MinValue;
+	float _timeOfLastCull = float.MinValue;
 
 	/// <summary>
 	/// keeps track of the total number of instances spawned
 	/// </summary>
-	private int _spawnedInstanceCount = 0;
+	int _spawnedInstanceCount = 0;
 
 
 	#region Private
@@ -91,7 +91,7 @@ public sealed class TrashManRecycleBin
 	/// allocates
 	/// </summary>
 	/// <param name="count">Count.</param>
-	private void allocateGameObjects( int count )
+	void allocateGameObjects( int count )
 	{
 		if( imposeHardLimit && _gameObjectPool.Count + count > hardLimit )
 			count = hardLimit - _gameObjectPool.Count;
@@ -100,15 +100,12 @@ public sealed class TrashManRecycleBin
 		{
 			GameObject go = GameObject.Instantiate( prefab.gameObject ) as GameObject;
 			go.name = prefab.name;
-#if UNITY_4_6 || UNITY_5_0
 
-            if(go.transform as RectTransform)
-            {
-                go.transform.SetParent(TrashMan.instance.transform, false);
-            }
+            if( go.transform as RectTransform )
+                go.transform.SetParent( TrashMan.instance.transform, false );
             else
-#endif
-			    go.transform.parent = TrashMan.instance.transform;
+				go.transform.parent = TrashMan.instance.transform;
+			
 			go.SetActive( false );
 			_gameObjectPool.Push( go );
 		}
@@ -118,7 +115,7 @@ public sealed class TrashManRecycleBin
 	/// <summary>
 	/// pops an object off the stack. Returns null if we hit the hardLimit.
 	/// </summary>
-	private GameObject pop()
+	GameObject pop()
 	{
 		if( imposeHardLimit && _spawnedInstanceCount >= hardLimit )
 			return null;

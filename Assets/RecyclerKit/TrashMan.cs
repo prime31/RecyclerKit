@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 
 
-public partial class TrashMan : MonoBehaviour
+public class TrashMan : MonoBehaviour
 {
 	/// <summary>
 	/// access to the singleton
@@ -32,12 +33,12 @@ public partial class TrashMan : MonoBehaviour
 	/// <summary>
 	/// uses the GameObject instanceId as its key for fast look-ups
 	/// </summary>
-	private Dictionary<int,TrashManRecycleBin> _instanceIdToRecycleBin = new Dictionary<int,TrashManRecycleBin>();
+	Dictionary<int,TrashManRecycleBin> _instanceIdToRecycleBin = new Dictionary<int,TrashManRecycleBin>();
 
 	/// <summary>
 	/// uses the pool name to find the GameObject instanceId
 	/// </summary>
-	private Dictionary<string,int> _poolNameToInstanceId = new Dictionary<string,int>();
+	Dictionary<string,int> _poolNameToInstanceId = new Dictionary<string,int>();
 
 	[HideInInspector]
 	public new Transform transform;
@@ -45,7 +46,7 @@ public partial class TrashMan : MonoBehaviour
 
 	#region MonoBehaviour
 
-	private void Awake()
+	void Awake()
 	{
 		if( instance != null )
 		{
@@ -64,11 +65,16 @@ public partial class TrashMan : MonoBehaviour
 		// only cull if we have an interval greater than 0
 		if( cullExcessObjectsInterval > 0 )
 			StartCoroutine( cullExcessObjects() );
+
+		SceneManager.activeSceneChanged += activeSceneChanged;
 	}
 
 
-	private void OnLevelWasLoaded()
+	void activeSceneChanged( Scene oldScene, Scene newScene )
 	{
+		if( oldScene.name == null )
+			return;
+		
 		for( var i = recycleBinCollection.Count - 1; i >= 0; i-- )
 		{
 			if( !recycleBinCollection[i].persistBetweenScenes )
@@ -77,7 +83,7 @@ public partial class TrashMan : MonoBehaviour
 	}
 
 
-	private void OnApplicationQuit()
+	void OnApplicationQuit()
 	{
 		instance = null;
 	}
@@ -91,7 +97,7 @@ public partial class TrashMan : MonoBehaviour
 	/// coroutine that runs every couple seconds and removes any objects created over the recycle bins limit
 	/// </summary>
 	/// <returns>The excess objects.</returns>
-	private IEnumerator cullExcessObjects()
+	IEnumerator cullExcessObjects()
 	{
 		var waiter = new WaitForSeconds( cullExcessObjectsInterval );
 
@@ -108,7 +114,7 @@ public partial class TrashMan : MonoBehaviour
 	/// <summary>
 	/// populats the lookup dictionaries
 	/// </summary>
-	private void initializePrefabPools()
+	void initializePrefabPools()
 	{
 		if( recycleBinCollection == null )
 			return;
@@ -129,7 +135,7 @@ public partial class TrashMan : MonoBehaviour
 	/// internal method that actually does the work of grabbing the item from the bin and returning it
 	/// </summary>
 	/// <param name="gameObjectInstanceId">Game object instance identifier.</param>
-	private static GameObject spawn( int gameObjectInstanceId, Vector3 position, Quaternion rotation )
+	static GameObject spawn( int gameObjectInstanceId, Vector3 position, Quaternion rotation )
 	{
 		if( instance._instanceIdToRecycleBin.ContainsKey( gameObjectInstanceId ) )
 		{
@@ -139,11 +145,9 @@ public partial class TrashMan : MonoBehaviour
 			{
 				var newTransform = newGo.transform;
 
-#if UNITY_4_6 || UNITY_5_0
-                if (newTransform as RectTransform)
-                    newTransform.SetParent(null, false);
+                if( newTransform as RectTransform )
+                    newTransform.SetParent( null, false );
                 else
-#endif
 				    newTransform.parent = null;
 
 				newTransform.position = position;
@@ -165,7 +169,7 @@ public partial class TrashMan : MonoBehaviour
 	/// <returns>The despawn after delay.</returns>
 	/// <param name="go">Go.</param>
 	/// <param name="delayInSeconds">Delay in seconds.</param>
-	private IEnumerator internalDespawnAfterDelay( GameObject go, float delayInSeconds )
+	IEnumerator internalDespawnAfterDelay( GameObject go, float delayInSeconds )
 	{
 		yield return new WaitForSeconds( delayInSeconds );
 		despawn( go );
@@ -231,11 +235,9 @@ public partial class TrashMan : MonoBehaviour
 			Debug.LogWarning( "attempted to spawn go (" + go.name + ") but there is no recycle bin setup for it. Falling back to Instantiate" );
 			var newGo = GameObject.Instantiate( go, position, rotation ) as GameObject;
 
-#if UNITY_4_6 || UNITY_5_0
-            if (newGo.transform as RectTransform != null)
-                newGo.transform.SetParent(null, false);
+            if( newGo.transform as RectTransform != null )
+                newGo.transform.SetParent( null, false );
             else
-#endif
 			    newGo.transform.parent = null;
 
 			return newGo;
@@ -279,11 +281,9 @@ public partial class TrashMan : MonoBehaviour
 		{
 			instance._instanceIdToRecycleBin[instance._poolNameToInstanceId[goName]].despawn( go );
 
-#if UNITY_4_6 || UNITY_5_0
-            if (go.transform as RectTransform != null)
-                go.transform.SetParent(instance.transform, false);
+            if( go.transform as RectTransform != null )
+                go.transform.SetParent( instance.transform, false );
             else
-#endif
                 go.transform.parent = instance.transform;
 		}
 	}
@@ -323,8 +323,9 @@ public partial class TrashMan : MonoBehaviour
 	/// <param name="go">Go.</param>
 	public static TrashManRecycleBin recycleBinForGameObject( GameObject go )
 	{
-		if( instance._instanceIdToRecycleBin.ContainsKey( go.GetInstanceID() ) )
-			return instance._instanceIdToRecycleBin[go.GetInstanceID()];
+		TrashManRecycleBin recycleBin;
+		if( instance._instanceIdToRecycleBin.TryGetValue( go.GetInstanceID(), out recycleBin ) )
+			return recycleBin;
 		return null;
 	}
 
