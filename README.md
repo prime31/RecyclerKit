@@ -19,14 +19,3 @@ Optional Branch
 
 The ObjectComponent branch has one minor change: any recycleable object must have the TrashManRecycleableObject component on it. This does enable a couple niceties such as spawn/despawn events and no need to access GameObject.name (which allocates a bit of memory)
 
-
-License
------
-[Attribution-NonCommercial-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode) with [simple explanation](http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US) with the attribution clause waived. You are free to use RecyclerKit in any and all games that you make. You cannot sell RecyclerKit directly or as part of a larger game asset.
-
-
-
-Attribution
------
-
-I would like to give attribution to the original inspiration for RecyclerKit but I have no clue who or where the first iteration came from. At this point, RecyclerKit is so far removed from its original inspiration that it is impossible to trace its origin.
